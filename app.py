@@ -56,9 +56,8 @@ if selected_option == 'Prediction':
     with col4:
         Sym_18 = st.text_input('What is your Sex:: 0 = Female , 1 = Male',0) 
         Sym_19 = st.text_input('What is your Age: 1 = 18-24 9 = 60-64 13 = 80 or older (Every 5 years increases 1) ',0)
-        Sym_20 = st.text_input('What is your Level of Education: Scale 1-6 1 = Never attended, 2 = Grades 1 through 8 (Elementary) 3 = Grades 9 through 11 (Some high school) 4 = Grade 12 or GED (High school graduate) 5 = College 1 year to 3 years (Some college or technical school) 6 = College 4 years or more (College graduate)',0)
-        Sym_21 = st.text_input('What is your Income: Scale 1-8 1 = less than $10,000 5 = less than $35,000 8 = $75,000 or more',0)
-        
+        Sym_20 = st.text_input('What is your Level of Education: Scale 1-6 1 = Never attended, 2 = Grades 1-8, 3 = Grades 9-11, 4 = Grade 12 or GED, 5 = College 1-3 years, 6 = College 4+ years',0)
+        Sym_21 = st.text_input('What is your Income: Scale 1-8 1 = less than 10,000 5 = less than 35,000 8 = 75,000 or more',0)
 
     # code for prediction
     def prediction(Sym_1,Sym_2,Sym_3,Sym_4,Sym_5,Sym_6,Sym_7,Sym_8,Sym_9,Sym_10,Sym_11,Sym_12,Sym_13,Sym_14,Sym_15,Sym_16,Sym_17,Sym_18,Sym_19,Sym_20,Sym_21):
@@ -70,6 +69,7 @@ if selected_option == 'Prediction':
         for i in range(len(data)):
             if data[i]!=0:
                 data[i] = str(data[i]).lower().strip()
+                data[i] = int(data[i])
 
         # make the prediction
         pred = model_RFC.predict([data])
@@ -84,10 +84,9 @@ if selected_option == 'Prediction':
         dia_prediction = prediction(Sym_1,Sym_2,Sym_3,Sym_4,Sym_5,Sym_6,Sym_7,Sym_8,Sym_9,Sym_10,Sym_11,Sym_12,Sym_13,Sym_14,Sym_15,Sym_16,Sym_17,Sym_18,Sym_19,Sym_20,Sym_21)
 
     if dia_prediction == 0:
-        st.error('You are not Diabetic')
+        st.success('You are not Diabetic')
     elif dia_prediction == 1:
-        st.success
-        st.success('You are Diabetic or have a chance of Diabetes')
+        st.error('You are Diabetic or have a chance of Diabetes')
 
 # Select Model page  
 elif selected_option == 'Select Model':
@@ -113,7 +112,7 @@ elif selected_option == 'Select Model':
     elif model_option == 'Extremely Random Tree':
         model_option = 'ERT'
     elif model_option == 'Neural Networks':
-        model_option = 'NN'
+        model_option = 'MLPC'
 
     # Load the model
     model_selected = jb.load(f'model_{model_option}.joblib')
