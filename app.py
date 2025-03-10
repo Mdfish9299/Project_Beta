@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score
 import streamlit_option_menu as som
 
 # load the model 
-model = jb.load('model_DT.joblib')
+model = jb.load('model_DT.joblib') 
 
 # slider 
 with st.sidebar:
