@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score
 import streamlit_option_menu as som
 
 # load the model 
-model_RFC = jb.load('model_DT.joblib')
+model = jb.load('model_DT.joblib')
 
 # slider 
 with st.sidebar:
@@ -16,14 +16,14 @@ with st.sidebar:
     menu_option = ['Prediction', 'Select Model','Train Model']
     
     # selecte Option
-    selected_option = som.option_menu('Diabetes Prediction System Based on Lifestyle',options= menu_option , icons = ['hospital','database-fill-add','train-front'], menu_icon='bandaid')
+    selected_option = som.option_menu('Diabetes Prediction System Based on Your Lifestyle',options= menu_option , icons = ['hospital','database-fill-add','train-front'], menu_icon='bandaid')
  
 
 # Prediction page
 if selected_option == 'Prediction':
     
     # Header of Web page
-    st.header(body='Diabetes Prediction System Based on Lifestyle')
+    st.header(body='Diabetes Prediction System Based on Your Lifestyle')
     
     # devide the page into 4 col
     col1, col2, col3, col4 = st.columns(4)
@@ -72,7 +72,7 @@ if selected_option == 'Prediction':
                 data[i] = int(data[i])
 
         # make the prediction
-        pred = model_RFC.predict([data])
+        pred = model.predict([data])
 
         # return the prediction
         return pred[0]
@@ -86,7 +86,7 @@ if selected_option == 'Prediction':
     if dia_prediction == 0:
         st.success('You are not Diabetic')
     elif dia_prediction == 1:
-        st.error('You are Diabetic or have a chance of Diabetes')
+        st.error('You are Diabetic or Pre-Diabetes. Perhap you should consult with your doctor')
 
 # Select Model page  
 elif selected_option == 'Select Model':
@@ -114,8 +114,13 @@ elif selected_option == 'Select Model':
     elif model_option == 'Neural Networks':
         model_option = 'MLPC'
 
+
+    if st.button("Load the Model"):
+        model = jb.load(f'model_{model_option}.joblib')
+        st.success("Model Loaded")
+
     # Load the model
-    model_selected = jb.load(f'model_{model_option}.joblib')
+    model = jb.load(f'model_{model_option}.joblib')
         
 # Train model   
 elif selected_option == 'Train Model':
