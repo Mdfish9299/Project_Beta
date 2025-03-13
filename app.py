@@ -1,4 +1,3 @@
-
 import streamlit as st 
 import pandas as pd
 import numpy as np
@@ -7,100 +6,82 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import streamlit_option_menu as som
 
-# load the model 
-model = jb.load('model_DT.joblib') 
+# Initialize session state
+if 'inputs' not in st.session_state:
+    st.session_state.inputs = {
+        'Sym_1': 0, 'Sym_2': 0, 'Sym_3': 0, 'Sym_4': 0, 'Sym_5': 0, 'Sym_6': 0,
+        'Sym_7': 0, 'Sym_8': 0, 'Sym_9': 0, 'Sym_10': 0, 'Sym_11': 0, 'Sym_12': 0,
+        'Sym_13': 0, 'Sym_14': 0, 'Sym_15': 0, 'Sym_16': 0, 'Sym_17': 0, 'Sym_18': 0,
+        'Sym_19': 0, 'Sym_20': 0, 'Sym_21': 0
+    }
 
-# slider 
+if 'model' not in st.session_state:
+    st.session_state.model = jb.load('model_DT.joblib')
+
+# Sidebar menu
 with st.sidebar:
-    # Options
-    menu_option = ['Prediction', 'Select Model','Train Model']
-    
-    # selecte Option
-    selected_option = som.option_menu('Diabetes Prediction System Based on Your Lifestyle',options= menu_option , icons = ['hospital','database-fill-add','train-front'], menu_icon='bandaid')
- 
+    menu_option = ['Prediction', 'Select Model', 'Train Model']
+    selected_option = som.option_menu('Diabetes Prediction System Based on Your Lifestyle', options=menu_option, icons=['hospital', 'database-fill-add', 'train-front'], menu_icon='bandaid')
 
 # Prediction page
 if selected_option == 'Prediction':
+    st.header('Diabetes Prediction System Based on Your Lifestyle')
     
-    # Header of Web page
-    st.header(body='Diabetes Prediction System Based on Your Lifestyle')
-    
-    # devide the page into 4 col
-    col1, col2, col3, col4 = st.columns(4)
+    with st.form(key='prediction_form'):
+        st.subheader('Health Information')
+        col1, col2, col3, col4 = st.columns(4)
 
+        with col1:
+            st.session_state.inputs['Sym_1'] = st.radio('High Blood Pressure (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_1'])
+            st.session_state.inputs['Sym_2'] = st.radio('High Cholesterol (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_2'])
+            st.session_state.inputs['Sym_3'] = st.radio('Cholesterol Check in 5 Years (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_3'])
+            st.session_state.inputs['Sym_4'] = st.number_input('BMI Score:', value=st.session_state.inputs['Sym_4'])
+            st.session_state.inputs['Sym_5'] = st.radio('Smoker (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_5'])
+            st.session_state.inputs['Sym_6'] = st.radio('Stroke (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_6'])
 
-    # in 1st column
-    with col1:
-        Sym_1 = st.text_input('High Blood Pressure: 0 = No , 1 = Yes',0) 
-        Sym_2 = st.text_input('High Cholesterol: 0 = No , 1 = Yes',0)
-        Sym_3 = st.text_input('Cholesterol Check in 5 Years: 0 = No , 1 = Yes',0)
-        Sym_4 = st.text_input('BMI Score:',0)
-        Sym_5 = st.text_input('Smoker: 0 = No , 1 = Yes',0)
-        Sym_6 = st.text_input('Stroke: 0 = No , 1 = Yes',0)
+        with col2:
+            st.session_state.inputs['Sym_7'] = st.radio('Heart Disease or Attack (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_7'])
+            st.session_state.inputs['Sym_8'] = st.radio('Physical Activity in the past 30 days (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_8'])
+            st.session_state.inputs['Sym_9'] = st.radio('Fruits Consumption (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_9'])
+            st.session_state.inputs['Sym_10'] = st.radio('Veggies Consumption (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_10'])
+            st.session_state.inputs['Sym_11'] = st.radio('Heavy Alcohol Consumption (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_11'])
+            st.session_state.inputs['Sym_12'] = st.radio('Health Care Coverage (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_12'])
 
-    with col2:
-        Sym_7 = st.text_input('Heart Disease or Attack: 0 = No , 1 = Yes',0) 
-        Sym_8 = st.text_input('Physical Activity in the past 30 days: 0 = No , 1 = Yes',0)
-        Sym_9 = st.text_input('Fruits Consumption: 0 = No , 1 = Yes',0)
-        Sym_10 = st.text_input('Veggies Consumption: 0 = No , 1 = Yes',0)
-        Sym_11 = st.text_input('Heavy Achcohol Consumption (> 14 drinks/Wk for men and > 7 for women): 0 = No , 1 = Yes',0)
-        Sym_12 = st.text_input('Health Care Coverage: 0 = No , 1 = Yes',0)
+        with col3:
+            st.session_state.inputs['Sym_13'] = st.radio('No Doctor because of cost in the past 12 months (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_13'])
+            st.session_state.inputs['Sym_14'] = st.number_input('General Health Score: scale of 1-5', value=st.session_state.inputs['Sym_14'])
+            st.session_state.inputs['Sym_15'] = st.number_input('Mental Health Check: Days not good in the past 30 days', value=st.session_state.inputs['Sym_15'])
+            st.session_state.inputs['Sym_16'] = st.number_input('Physical Health: Days not good in the past 30 days', value=st.session_state.inputs['Sym_16'])
+            st.session_state.inputs['Sym_17'] = st.radio('Difficulty Walking (0: No, 1: Yes):', [0, 1], index=st.session_state.inputs['Sym_17'])
 
-    with col3:
-        Sym_13 = st.text_input('No Doctor because of cost in the past 12 months: 0 = No , 1 = Yes',0) 
-        Sym_14 = st.text_input('General Health Score: scale of 1-5 - 1- excellent, 5-poor',0)
-        Sym_15 = st.text_input('Mental Health Check: Days not good in the past 30 days',0)
-        Sym_16 = st.text_input('Physical Health: Days not good in the past 30 days',0)
-        Sym_17 = st.text_input('Difficulty Walking: 0 = No , 1 = Yes',0)
+        with col4:
+            st.session_state.inputs['Sym_18'] = st.radio('What is your Sex (0: Female, 1: Male):', [0, 1], index=st.session_state.inputs['Sym_18'])
+            st.session_state.inputs['Sym_19'] = st.number_input('What is your Age: 1 = 18-24, 9 = 60-64, 13 = 80 or older', value=st.session_state.inputs['Sym_19'])
+            st.session_state.inputs['Sym_20'] = st.number_input('What is your Level of Education: Scale 1-6', value=st.session_state.inputs['Sym_20'])
+            st.session_state.inputs['Sym_21'] = st.number_input('What is your Income: Scale 1-8', value=st.session_state.inputs['Sym_21'])
 
-    with col4:
-        Sym_18 = st.text_input('What is your Sex:: 0 = Female , 1 = Male',0) 
-        Sym_19 = st.text_input('What is your Age: 1 = 18-24 9 = 60-64 13 = 80 or older (Every 5 years increases 1) ',0)
-        Sym_20 = st.text_input('What is your Level of Education: Scale 1-6 1 = Never attended, 2 = Grades 1-8, 3 = Grades 9-11, 4 = Grade 12 or GED, 5 = College 1-3 years, 6 = College 4+ years',0)
-        Sym_21 = st.text_input('What is your Income: Scale 1-8 1 = less than 10,000 5 = less than 35,000 8 = 75,000 or more',0)
+        submit_button = st.form_submit_button(label='Make Prediction')
 
-    # code for prediction
-    def prediction(Sym_1,Sym_2,Sym_3,Sym_4,Sym_5,Sym_6,Sym_7,Sym_8,Sym_9,Sym_10,Sym_11,Sym_12,Sym_13,Sym_14,Sym_15,Sym_16,Sym_17,Sym_18,Sym_19,Sym_20,Sym_21):
+    if submit_button:
+        def prediction(inputs):
+            data = list(inputs.values())
+            for i in range(len(data)):
+                if data[i] != 0:
+                    data[i] = str(data[i]).lower().strip()
+                    data[i] = int(data[i])
+            pred = st.session_state.model.predict([data])
+            return pred[0]
 
-        # input data
-        data = [Sym_1,Sym_2,Sym_3,Sym_4,Sym_5,Sym_6,Sym_7,Sym_8,Sym_9,Sym_10,Sym_11,Sym_12,Sym_13,Sym_14,Sym_15,Sym_16,Sym_17,Sym_18,Sym_19,Sym_20,Sym_21]
-
-        # removing white space if have and handling the case error
-        for i in range(len(data)):
-            if data[i]!=0:
-                data[i] = str(data[i]).lower().strip()
-                data[i] = int(data[i])
-
-        # make the prediction
-        pred = model.predict([data])
-
-        # return the prediction
-        return pred[0]
-
-    dia_prediction = ''
-
-    # submit button
-    if st.button('Make Prediction'):
-        dia_prediction = prediction(Sym_1,Sym_2,Sym_3,Sym_4,Sym_5,Sym_6,Sym_7,Sym_8,Sym_9,Sym_10,Sym_11,Sym_12,Sym_13,Sym_14,Sym_15,Sym_16,Sym_17,Sym_18,Sym_19,Sym_20,Sym_21)
-
-    if dia_prediction == 0:
-        st.success('You are not Diabetic')
-    elif dia_prediction == 1:
-        st.error('You are Diabetic or Pre-Diabetes. Perhap you should consult with your doctor')
+        dia_prediction = prediction(st.session_state.inputs)
+        if dia_prediction == 0:
+            st.success('You are not Diabetic')
+        elif dia_prediction == 1:
+            st.error('You are Diabetic or Pre-Diabetes. Perhaps you should consult with your doctor')
 
 # Select Model page  
 elif selected_option == 'Select Model':
-    
-    # Header 
     st.title('Select the model for prediction')
-    
-    # Radio box for model selection
-    model_option = st.radio(
-        "Choose a model for prediction:",
-        ('K-Nearest Neighbors','Decision Tree','Random Forest', 'Extremely Random Tree', 'Neural Networks')
-    )
-
-    # Display the selected model
+    model_option = st.radio("Choose a model for prediction:", ('K-Nearest Neighbors','Decision Tree','Random Forest', 'Extremely Random Tree', 'Neural Networks'))
     st.write(f'You selected: {model_option}')
 
     if model_option == 'K-Nearest Neighbors':
@@ -114,28 +95,14 @@ elif selected_option == 'Select Model':
     elif model_option == 'Neural Networks':
         model_option = 'MLPC'
 
-
     if st.button("Load the Model"):
-        model = jb.load(f'model_{model_option}.joblib')
+        st.session_state.model = jb.load(f'model_{model_option}.joblib')
         st.success("Model Loaded")
 
-    # Load the model
-    model = jb.load(f'model_{model_option}.joblib')
-        
 # Train model   
 elif selected_option == 'Train Model':
-    
-    # Header
     st.title('Model Training Page')
-    
-    # Header
     st.header("Train the model")
-    
-    # Instruction
-    st.write("Click on the button to start traning the model")
-    
+    st.write("Click on the button to start training the model")
     if st.button("Start Training"):
-            
         st.success("Future Work")
-        
-        
