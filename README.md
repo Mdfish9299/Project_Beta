@@ -348,3 +348,109 @@ Or You just Copy/Fork Repository To Have the file [app.py](app.py).
 Explore the implementation of the model through an image provided in the project directory. Witness firsthand the capabilities of disease prediction using symptoms.
 
 ---
+# Key Project Code
+
+### Data Transformation
+
+After loading the dataset, we transformed the data:
+
+```python
+cols_to_convert = ['HighBP', 'HighChol', 'CholCheck', 'Smoker', 'Stroke', 'HeartDiseaseorAttack', 'PhysActivity', 'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare', 'NoDocbcCost', 'DiffWalk', 'Sex']
+
+for col in cols_to_convert:
+    X[col] = X[col].astype(bool)
+```
+
+### Statistical Data Overview
+
+```python
+X.describe()
+```
+
+### Converted and Cleaned Data
+
+We saved the cleaned dataset to CSV for further use:
+
+```python
+X.to_csv('X.csv', index=False)
+pd.DataFrame(y, columns=['target']).to_csv('y.csv', index=False)
+df_combined = pd.concat([X, pd.DataFrame(y, columns=['target'])], axis=1)
+df_combined.to_csv('Cleaned_Data.csv', index=False)
+```
+
+### Splitting the Data for Training and Testing
+
+```python
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+```
+
+### Training and Evaluating KNN Model
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+import matplotlib.pyplot as plt
+
+train_scores = []
+test_scores = []
+
+for k in range(1, 20, 2):
+    knn = KNeighborsClassifier(n_neighbors=k)
+    knn.fit(X_train, y_train)
+    train_score = knn.score(X_train, y_train)
+    test_score = knn.score(X_test, y_test)
+    train_scores.append(train_score)
+    test_scores.append(test_score)
+    print(f"k: {k}, Train/Test Score: {train_score:.3f}/{test_score:.3f}")
+
+plt.plot(range(1, 20, 2), train_scores, marker='o')
+plt.plot(range(1, 20, 2), test_scores, marker='x')
+plt.xlabel("k neighbors")
+plt.ylabel("Testing accuracy Score")
+plt.legend(["train", "test"])
+plt.show()
+```
+
+### Model Performance Evaluation
+
+```python
+from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score
+
+y_knn = knn.predict(X_test)
+roc_auc_knn = roc_auc_score(y_test, y_knn)
+
+print("KNN Performance Metrics")
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_knn))
+print("Classification Report:\n", classification_report(y_test, y_knn))
+print('ROC AUC:', round(roc_auc_knn*100,2), "%")
+```
+
+### Testing the Model Manually
+
+```python
+input_data = [[1, 1, 1, 25, 0, 0, 1, 1, 1, 0, 0, 1, 0, 2, 0, 0, 0, 0, 9, 6, 2]]
+manual_pred_knn = knn.predict(input_data)
+print('KNN Prediction:', manual_pred_knn)
+```
+
+## Project Strategy
+
+1. **Initial Commit** - Elliot's first commit started the project `(9e05e0f)`.
+2. **Framework Setup** - Mehdi's commit `(0073d14)` introduced the Streamlit app (`streamlit run app.py`).
+3. **Commit Issues** - James encountered push errors in commit `(862e628)`, later identified in `(0f475f8)`, causing commit `(1c2d1f0)` to be voided.
+4. **Issue Resolution** - Professor Pet resolved the issue, allowing further development `(e6bdb50)`.
+5. **New Strategy** - To avoid conflicts, team members coordinated Git pushes separately.
+6. **Code Refinement** - Between `(57be890)` and `(25e0324)`, trial-and-error methods refined the model structure.
+7. **Final Testing** - A small data anomaly was detected before the final version (Stopped adding commits notes due to Pete's feedback what are YOUR thoughts)
+
+---
+
+### How to Run the Streamlit App
+
+1. Save the script as `app.py`.
+2. Ensure all model files are in the same directory.
+3. Run the command:
+   ```bash
+   streamlit run app.py
+   ```
+
