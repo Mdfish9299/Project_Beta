@@ -38,7 +38,7 @@ Discover how machine learning can revolutionize Diabetes prediction. The RFC mod
 Explore the step-by-step process of preparing the data, training the model, and evaluating its performance.
 
 ## Dataset Information
-The Diabetes Health Indicators Dataset contains healthcare statistics and lifestyle survey information about people in general along with their diagnosis of diabetes. The 35 features consist of some demographics, lab test results, and answers to survey questions for each patient. The target variable for classification is whether a patient has diabetes, is pre-diabetic, or healthy.
+The Diabetes Health Indicators Dataset contains healthcare statistics and lifestyle survey information about people in general along with their diagnosis of diabetes. The 21 features consist of some demographics, lab test results, and answers to survey questions for each patient. The target variable for classification is whether a patient has diabetes, is pre-diabetic, or healthy.
 
 ### Dataset Characteristics
 - **Type:** Tabular, Multivariate
