@@ -4,7 +4,7 @@
 
 ## Overview
 
-The core of this project lies in a Jupyter Notebook, [Project.ipynb](Project.ipynb). This notebook utilizes a Random Forest Classifier (RFC) to make accurate predictions about diseases based on a set of symptoms.
+The core of this project lies in a Jupyter Notebook, [Project.ipynb](Project.ipynb). This notebook utilizes several models, inpcluding the Random Forest Classifier (RFC) to make accurate predictions about diseases based on a set of symptoms.
 
 ## Table of Contents
 
