@@ -16,7 +16,7 @@ if 'inputs' not in st.session_state:
     }
 
 if 'model' not in st.session_state:
-    st.session_state.model = jb.load('model_DT.joblib')
+    st.session_state.model = jb.load('models/model_DT.joblib')
 
 # Sidebar menu
 with st.sidebar:
@@ -96,7 +96,7 @@ elif selected_option == 'Select Model':
         model_option = 'MLPC'
 
     if st.button("Load the Model"):
-        st.session_state.model = jb.load(f'model_{model_option}.joblib')
+        st.session_state.model = jb.load(f'models/model_{model_option}.joblib')
         st.success("Model Loaded")
 
 # Train model   
